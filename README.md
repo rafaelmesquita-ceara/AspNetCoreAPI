@@ -48,5 +48,6 @@ dotnet run
  	- Models de entidade (Pasta Models)
  	- Controladores de entidade (Pasta Controlers)
  - CRUD utilizando um ORM (Entity Framework)
+ - Documentação da API feita no Insomnia (arquivo Insomnia_2020-07-12.json)
 
 
