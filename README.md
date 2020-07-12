@@ -2,6 +2,14 @@
 
 O AspNetCoreAPI é uma API simples feita em **ASP.NET CORE 3.1** utilizando o **Entity Framework** como ORM, o projeto foi feito para fins de aprendizado. Conceitos como métodos http, migrations, CLI do dotnet, validações com base no modelo, padrão de CodeFirst, e SQL Server hospedado no AZURE foram aplicados de forma prática nesta solução.
 
+<img src="https://user-images.githubusercontent.com/62113721/87240855-a8855100-c3f3-11ea-8d8c-6fa9a1b3793d.gif" 
+width="95%" height="400px"
+/> 
+
+<img src="https://user-images.githubusercontent.com/62113721/87240878-d4a0d200-c3f3-11ea-873d-23dd884a6489.gif" 
+width="95%" height="400px"
+/> 
+
 # Entidades
 O AspNetCoreAPI consiste em uma entidade de categorias e uma entidade de produtos onde possui a seguinte estrutura:
 
