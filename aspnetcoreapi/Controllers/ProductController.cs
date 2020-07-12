@@ -56,7 +56,7 @@ namespace aspnetcoreapi.Controllers
         [FromServices] DataContext context, // Pego o DataContext dos services no Startup.cs
         [FromBody]Product model) // Pego o modelo Product do corpo da requisição
       {
-        // Valido minha categoria com base no Model Product.cs
+        // Valido meu produto com base no Model Product.cs
         if (ModelState.IsValid)   
         {
           //  Caso todos a validacao tenha sido bem sucedida, ele salva no meu banco de dados o Produto
@@ -71,5 +71,58 @@ namespace aspnetcoreapi.Controllers
         }
       }
       #endregion
+      #region UPDATE
+      [HttpPut] // Método de requisição Put
+      [Route("{id:int}")] // Rota padrão (/)
+      public async Task<ActionResult<Product>> Update(
+        [FromServices] DataContext context, // Pego o DataContext dos services no Startup.cs
+        [FromBody]Product model, // Pego o modelo Product do corpo da requisição
+        int id)  // Uso o id passado pela rota
+      {
+        // Valido meu produto com base no Model Product.cs
+        if (ModelState.IsValid)   
+        {
+          var result = context.Products.SingleOrDefault(x => x.Id == id); // Procuro no meu database o produto com o id especificado
+          if (result != null)
+          {
+            // Caso ele ache, vou modificar campo por campo, substituindo pelo model passado no body
+              result.Title = model.Title;
+              result.Description = model.Description;
+              result.Price = model.Price;
+              result.CategoryId = model.CategoryId;
+              await context.SaveChangesAsync(); // Salvo no meu database o result modificado
+              return result; // Retorno meu Result
+              
+          }
+          return StatusCode(400, "Produto nao encontrado"); // Caso ele nao ache o produto, ele vai dar bad request
+        }
+        else
+        {
+          // Caso a validacao nao tenha sido bem sucedida, ele retorna o erro especificado no Model
+          return BadRequest(ModelState);
+        }
+      }
+      #endregion
+      #region DELETE
+      [HttpDelete] // Método de requisição Delete
+      [Route("{id:int}")] // Rota padrão (/)
+      public async Task<ActionResult<Product>> Delete(
+        [FromServices] DataContext context, // Pego o DataContext dos services no Startup.cs
+        int id)  // Uso o id passado pela rota
+      {
+        // Valido meu produto com base no Model Product.cs
+          var result = context.Products.SingleOrDefault(x => x.Id == id);
+          if (result != null)
+          {
+              context.Products.Attach(result); // Pego meu result no banco
+              context.Products.Remove(result); // Deleto meu result no banco
+              await context.SaveChangesAsync(); // Salvo as alteracoes de forma assincrona
+              return StatusCode(200); // Retorno um status code 200 (sucesso)
+          }
+          return StatusCode(400, "Produto nao encontrado"); // Caso eu nao ache o produto, retorno o status 400 de badrequest
+      }
+      #endregion
     }
 }
+
+
