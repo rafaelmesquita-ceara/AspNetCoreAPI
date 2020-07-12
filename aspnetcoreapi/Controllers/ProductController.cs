@@ -49,7 +49,7 @@ namespace aspnetcoreapi.Controllers
         return products; // Retorno os produtos
       }
       #endregion
-
+      #region POST
       [HttpPost] // Método de requisição Post
       [Route("")] // Rota padrão (/)
       public async Task<ActionResult<Product>> Post(
@@ -70,5 +70,6 @@ namespace aspnetcoreapi.Controllers
           return BadRequest(ModelState);
         }
       }
+      #endregion
     }
 }
