@@ -28,7 +28,7 @@ namespace aspnetcoreapi
         public void ConfigureServices(IServiceCollection services)
         {
             // Minha string de conexão
-            services.AddDbContext<DataContext>(opt => opt.UseSqlServer("Password=Ericsouza.123;Persist Security Info=True;User ID=rafael;Initial Catalog=dbrafael;Data Source=rafaelmb.database.windows.net"));
+            services.AddDbContext<DataContext>(opt => opt.UseSqlServer("STRING DE CONEXAO AQUI"));
             // Uso o AddScoped para ele não fechar uma conexão enquanto estiver fazendo queries
             services.AddScoped<DataContext, DataContext>();
             services.AddControllers();
