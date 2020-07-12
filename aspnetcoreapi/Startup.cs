@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using aspnetcoreapi.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace aspnetcoreapi
 {
@@ -25,6 +27,10 @@ namespace aspnetcoreapi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Minha string de conexão
+            services.AddDbContext<DataContext>(opt => opt.UseSqlServer("Password=Ericsouza.123;Persist Security Info=True;User ID=rafael;Initial Catalog=dbrafael;Data Source=rafaelmb.database.windows.net"));
+            // Uso o AddScoped para ele não fechar uma conexão enquanto estiver fazendo queries
+            services.AddScoped<DataContext, DataContext>();
             services.AddControllers();
         }
 
