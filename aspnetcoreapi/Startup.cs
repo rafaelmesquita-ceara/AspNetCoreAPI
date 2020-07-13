@@ -28,7 +28,8 @@ namespace aspnetcoreapi
         public void ConfigureServices(IServiceCollection services)
         {
             // Minha string de conexão
-            services.AddDbContext<DataContext>(opt => opt.UseSqlServer(""));
+
+            services.AddDbContext<DataContext>(opt => opt.UseSqlServer("STRING DE CONEXAO AQUI"));
             // Uso o AddScoped para ele não fechar uma conexão enquanto estiver fazendo queries
             services.AddScoped<DataContext, DataContext>();
             services.AddControllers().AddNewtonsoftJson(options =>
