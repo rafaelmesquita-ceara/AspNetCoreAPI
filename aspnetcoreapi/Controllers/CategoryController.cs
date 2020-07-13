@@ -18,7 +18,7 @@ namespace aspnetcoreapi.Controllers
       public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context) 
       // Task para forma assincrona, irei retornar uma lista de categorias, irei pegar o DataContext dos services, onde já defini o DataContext
       {
-        var categories = await context.Categories.ToListAsync(); // Faço uma consulta no meu database para pegar todas as categorias
+        var categories = await context.Categories.Include(b => b.ProductCategories).ThenInclude(x => x.Product).ToListAsync(); // Incluo minhas categorias do produto.ToListAsync(); // Faço uma consulta no meu database para pegar todas as categorias
         return categories; // Retorno as categorias
       }
 
