@@ -19,7 +19,8 @@ namespace aspnetcoreapi.Controllers
       public async Task<ActionResult<List<Product>>> Get([FromServices] DataContext context) 
       // Task para forma assincrona, irei retornar uma lista de produtos, irei pegar o DataContext dos services, onde já defini o DataContext
       {
-        var products = await context.Products.Include(x=> x.Category).ToListAsync(); // Faço uma consulta no meu database para pegar todos os produtos
+        var products = await context.Products.Include(b => b.ProductCategories).ThenInclude(x => x.Category) // Incluo minhas categorias do produto
+        .ToListAsync(); // Faço uma consulta no meu database para pegar todos os produtos
         return products; // Retorno os produtos
       }
 
@@ -29,8 +30,8 @@ namespace aspnetcoreapi.Controllers
       // Task para forma assincrona, irei retornar um produto com base no ID, irei pegar o DataContext dos services, onde já defini o DataContext
       {
         var product = await context.Products
-          .Include(x => x.Category) // Dou um join nas categorias para incluir no meu json retornado
           .AsNoTracking() // Para nao criar proxys do meu objeto
+          .Include(b => b.ProductCategories).ThenInclude(x => x.Category) // Incluo minhas categorias do produto
           .FirstOrDefaultAsync(x => x.Id == id); // Recebo o produto com base no id
         return product; // Retorno o produto
       }
@@ -41,10 +42,9 @@ namespace aspnetcoreapi.Controllers
       // Task para forma assincrona, irei retornar produtos com base na categoria, irei pegar o DataContext dos services, onde já defini o DataContext
       {
         var products = await context.Products
-          .Include(x => x.Category) // Dou um join nas categorias
-          .AsNoTracking() // Para nao criar proxys do meu objeto
-          .Where(x => x.CategoryId == id) // Pego apenas os produtos daquelas categorias
-          .ToListAsync(); // Jogo na lista de forma assincrona
+        .Where(p => p.ProductCategories
+        .Any(c => c.Category.Id == id))
+        .ToListAsync();
 
         return products; // Retorno os produtos
       }
@@ -59,9 +59,19 @@ namespace aspnetcoreapi.Controllers
         // Valido meu produto com base no Model Product.cs
         if (ModelState.IsValid)   
         {
+          var productCategories = new List<ProductCategory>(); // Crio uma lista separada do meu model para nao gerar conflito na hora de inserir no banco de dados
+          productCategories = model.ProductCategories.ToList(); // Preciso converter a Collection para List
+          model.ProductCategories = null; // Deixo o antigo ProductCategories no meu model nulo para nao gerar conflito
           //  Caso todos a validacao tenha sido bem sucedida, ele salva no meu banco de dados o Produto
           context.Products.Add(model);
           await context.SaveChangesAsync();
+
+          foreach (ProductCategory p in productCategories)  // Percorro minha lista de productCategories passada pelo body
+          {
+            p.ProductId = model.Id; // Defino o ProductId no Id retornado do Produto recem criado
+            context.ProductCategories.Add(p); // Adiciono minha ProductCategory
+            await context.SaveChangesAsync(); // Salvo as mudancas
+          }
           return model; // Retorno meu modelo Product
         }
         else
@@ -89,7 +99,6 @@ namespace aspnetcoreapi.Controllers
               result.Title = model.Title;
               result.Description = model.Description;
               result.Price = model.Price;
-              result.CategoryId = model.CategoryId;
               await context.SaveChangesAsync(); // Salvo no meu database o result modificado
               return result; // Retorno meu Result
               
